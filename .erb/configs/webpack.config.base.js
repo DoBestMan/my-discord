@@ -4,7 +4,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
-import webpackPaths from './webpack.paths.js';
+import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../build/app/package.json';
 
 export default {
@@ -13,7 +13,7 @@ export default {
   module: {
     rules: [
       {
-        test: /\.[jt]sx?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -28,9 +28,7 @@ export default {
   output: {
     path: webpackPaths.srcPath,
     // https://github.com/webpack/webpack/issues/1114
-    library: {
-      type: 'commonjs2',
-    },
+    libraryTarget: 'commonjs2',
   },
 
   /**
@@ -39,6 +37,10 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     modules: [webpackPaths.srcPath, 'node_modules'],
+  },
+
+  optimization: {
+    namedModules: true,
   },
 
   plugins: [

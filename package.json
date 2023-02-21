@@ -1,6 +1,7 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
+  "name": "Discord",
+  "productName": "Discord ICI",
+  "version": "0.9.0",
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Fast Refresh for rapid application development",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -8,10 +9,10 @@
     "build:renderer": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.renderer.prod.babel.js",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir src",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
-    "package": "node -r @babel/register ./.erb/scripts/clean.js dist release && yarn build && electron-builder build --publish never",
-    "postinstall": "node -r @babel/register .erb/scripts/check-native-dep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
-    "start": "node -r @babel/register ./.erb/scripts/check-port-in-use.js && yarn start:renderer",
-    "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/babel-register ./src/main/main.ts",
+    "package": "node -r @babel/register ./.erb/scripts/Clean.js dist release && yarn build && electron-builder build --publish never",
+    "postinstall": "node -r @babel/register .erb/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.babel.js && opencollective-postinstall && yarn-deduplicate yarn.lock",
+    "dev": "node -r @babel/register ./.erb/scripts/CheckPortInUse.js && yarn start:renderer",
+    "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/BabelRegister ./src/main/main.js",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
     "test": "jest"
   },
@@ -27,11 +28,14 @@
     ],
     "*.{html,md,yml}": [
       "prettier --ignore-path .eslintignore --single-quote --write"
+    ],
+    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "Discord ICI",
+    "appId": "org.erb.DiscordICI",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -39,7 +43,7 @@
       "node_modules",
       "package.json"
     ],
-    "afterSign": ".erb/scripts/notarize.js",
+    "afterSign": ".erb/scripts/Notarize.js",
     "mac": {
       "type": "distribution",
       "hardenedRuntime": true,
@@ -62,6 +66,7 @@
       ]
     },
     "win": {
+      "icon": "assets/icon.png",
       "target": [
         "nsis"
       ]
@@ -91,20 +96,13 @@
     "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Discord ICI Dev Team",
+    "email": "icidiscorddevteam@gmail.com"
   },
   "contributors": [
     {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
+      "name": "GwangWon Kim",
+      "email": "icidiscorddevteam@gmail.com"
     }
   ],
   "license": "MIT",
@@ -120,7 +118,7 @@
     "sass",
     "webpack",
     "hot",
-    "reload"
+    "discord"
   ],
   "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
   "jest": {
@@ -168,7 +166,6 @@
     "@babel/preset-react": "^7.14.5",
     "@babel/preset-typescript": "^7.14.5",
     "@babel/register": "^7.14.5",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.1",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
@@ -221,7 +218,6 @@
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-hooks": "^4.0.8",
     "file-loader": "^6.0.0",
-    "html-webpack-plugin": "^5.3.1",
     "husky": "4.x.x",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.1.0",
@@ -235,25 +231,44 @@
     "sass": "^1.32.12",
     "sass-loader": "^11.0.1",
     "style-loader": "^2.0.0",
-    "terser-webpack-plugin": "^5.1.1",
     "typescript": "^4.2.4",
     "url-loader": "^4.1.0",
-    "webpack": "^5.36.2",
     "webpack-bundle-analyzer": "^4.4.1",
     "webpack-cli": "^4.6.0",
-    "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3",
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
+    "@hot-loader/react-dom": "^17.0.2",
+    "@pmmmwh/react-refresh-webpack-plugin": "0.5.0",
+    "@reduxjs/toolkit": "^1.6.1",
+    "axios": "^0.21.1",
+    "bytenode": "^1.3.4",
+    "bytenode-webpack-plugin": "^1.0.5",
+    "check-disk-space": "^3.0.1",
     "electron-debug": "^3.2.0",
+    "electron-first-run": "^3.0.0",
     "electron-log": "^4.3.5",
+    "electron-reload": "^2.0.0-alpha.1",
     "electron-updater": "^4.3.8",
     "history": "4.x.x",
+    "html-webpack-plugin": "4",
+    "jwt-decode": "^3.1.2",
     "react": "^17.0.2",
+    "react-block-ui": "^1.3.3",
     "react-dom": "^17.0.2",
+    "react-hot-loader": "^4.13.0",
+    "react-lock-screen": "^0.1.1",
+    "react-redux": "^7.2.5",
     "react-router-dom": "^5.2.0",
-    "regenerator-runtime": "^0.13.5"
+    "redux": "^4.1.1",
+    "regenerator-runtime": "^0.13.5",
+    "socket.io-client": "^4.2.0",
+    "sweetalert2": "^11.1.6",
+    "terser-webpack-plugin": "4.2.3",
+    "uuid": "^8.3.2",
+    "webpack": "4.46.0",
+    "webpack-dev-server": "^4.4.0"
   },
   "devEngines": {
     "node": ">=10.x",

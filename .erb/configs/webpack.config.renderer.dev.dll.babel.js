@@ -6,11 +6,11 @@ import webpack from 'webpack';
 import path from 'path';
 import { merge } from 'webpack-merge';
 import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths.js';
+import webpackPaths from './webpack.paths';
 import { dependencies } from '../../package.json';
-import checkNodeEnv from '../scripts/check-node-env';
+import CheckNodeEnv from '../scripts/CheckNodeEnv';
 
-checkNodeEnv('development');
+CheckNodeEnv('development');
 
 const dist = webpackPaths.dllPath;
 
@@ -35,12 +35,10 @@ export default merge(baseConfig, {
   },
 
   output: {
+    library: 'renderer',
     path: dist,
     filename: '[name].dev.dll.js',
-    library: {
-      name: 'renderer',
-      type: 'var',
-    },
+    libraryTarget: 'var',
   },
 
   plugins: [
@@ -65,9 +63,9 @@ export default merge(baseConfig, {
     new webpack.LoaderOptionsPlugin({
       debug: true,
       options: {
-        context: webpackPaths.srcPath,
+        context: path.join(__dirname, '..', 'app'),
         output: {
-          path: webpackPaths.dllPath,
+          path: path.join(__dirname, '..', 'dll'),
         },
       },
     }),
