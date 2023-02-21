@@ -1,27 +1,48 @@
-/*
- * @NOTE: Prepend a `~` to css file paths that are in your node_modules
- *        See https://github.com/webpack-contrib/sass-loader#imports
- */
 body {
   position: relative;
   color: white;
   height: 100vh;
-  background: linear-gradient(
+  margin: 0;
+  /* background: linear-gradient(
     200.96deg,
     #fedc2a -29.09%,
     #dd5789 51.77%,
     #7a2c9e 129.35%
-  );
+  ); */
+  background: #202225;
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+.link-text{
+  cursor: pointer;
+}
+#root {
+  width: 100%;
+}
+
+/*
+ * CSS for login form
+ */
+input {
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  appearance: none;
+  font-size: 1.3rem;
+  box-shadow: 0px 8px 28px -6px rgba(24, 39, 75, 0.12),
+    0px 18px 88px -4px rgba(24, 39, 75, 0.14);
+  transition: transform ease-in 0.1s;
+  margin: 10px 0;
+}
 
 button {
   background-color: white;
-  padding: 10px 20px;
+  padding: 10px 30px;
   border-radius: 10px;
   border: none;
   appearance: none;
@@ -36,25 +57,102 @@ button:hover {
   transform: scale(1.05);
 }
 
-li {
-  list-style: none;
+h1 {
+  padding: 0 50px;
 }
 
-a {
+label {
+  margin: auto;
+  color: yellow;
+}
+
+.LoginForm {
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  min-width: 320px;
+}
+
+.submit {
   text-decoration: none;
   height: fit-content;
   width: fit-content;
-  margin: 10px;
+  margin: auto;
+  padding: 30px;
+  outline: none;
 }
 
-a:hover {
-  opacity: 1;
-  text-decoration: none;
-}
-
-.Hello {
+.Container {
+  width: 100%;
+  height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin: 20px 0;
+}
+
+.Settings {
+  width: 2%;
+  position: absolute;
+  top: 1%;
+  right: 1%;
+}
+
+.Settings:hover {
+  width: 2.2%;
+}
+
+/* CSS for loading */
+
+.spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  background-color: #00000066;
+}
+
+.doubleBounce1,
+.doubleBounce2 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #eee;
+  opacity: 0.6;
+  position: absolute;
+
+  -webkit-animation: sk-bounce 2s infinite ease-in-out;
+  animation: sk-bounce 2s infinite ease-in-out;
+}
+
+.doubleBounce2 {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
+}
+
+@-webkit-keyframes sk-bounce {
+  0%,
+  100% {
+    -webkit-transform: scale(0);
+  }
+  50% {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes sk-bounce {
+  0%,
+  100% {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+  }
 }

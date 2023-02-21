@@ -6,8 +6,8 @@ import chalk from 'chalk';
 import { merge } from 'webpack-merge';
 import { spawn, execSync } from 'child_process';
 import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths.js';
-import checkNodeEnv from '../scripts/check-node-env';
+import webpackPaths from './webpack.paths';
+import checkNodeEnv from '../scripts/CheckNodeEnv';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
@@ -16,8 +16,7 @@ if (process.env.NODE_ENV === 'production') {
   checkNodeEnv('development');
 }
 
-const port = process.env.PORT || 1212;
-const publicPath = webpackPaths.distRendererPath;
+const port = process.env.PORT || 1213;
 const manifest = path.resolve(webpackPaths.dllPath, 'renderer.json');
 const requiredByDLLConfig = module.parent.filename.includes(
   'webpack.config.renderer.dev.dll'
@@ -43,10 +42,10 @@ export default merge(baseConfig, {
 
   mode: 'development',
 
-  target: ['web', 'electron-renderer'],
+  target: 'electron-renderer',
 
   entry: [
-    'webpack-dev-server/client?http://localhost:1212/dist',
+    'webpack-dev-server/client?http://localhost:1213/dist',
     'webpack/hot/only-dev-server',
     'core-js',
     'regenerator-runtime/runtime',
@@ -57,9 +56,7 @@ export default merge(baseConfig, {
     path: webpackPaths.distRendererPath,
     publicPath: '/',
     filename: 'renderer.dev.js',
-    library: {
-      type: 'umd',
-    },
+    libraryTarget: 'umd',
   },
 
   module: {
@@ -273,24 +270,17 @@ export default merge(baseConfig, {
 
   devServer: {
     port,
-    publicPath: '/',
     compress: true,
-    noInfo: false,
-    stats: 'errors-only',
-    inline: true,
-    lazy: false,
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
-    watchOptions: {
-      aggregateTimeout: 300,
-      ignored: /node_modules/,
-      poll: 100,
+    static: {
+      publicPath: '/',
     },
     historyApiFallback: {
       verbose: true,
       disableDotRule: false,
     },
-    before() {
+    onBeforeSetupMiddleware() {
       console.log('Starting Main Process...');
       spawn('npm', ['run', 'start:main'], {
         shell: true,

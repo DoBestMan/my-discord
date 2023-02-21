@@ -4,34 +4,29 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { merge } from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
+import BytenodeWebpackPlugin from 'bytenode-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import baseConfig from './webpack.config.base';
-import webpackPaths from './webpack.paths.js';
-import checkNodeEnv from '../scripts/check-node-env';
-import deleteSourceMaps from '../scripts/delete-source-maps';
+import webpackPaths from './webpack.paths';
+import CheckNodeEnv from '../scripts/CheckNodeEnv';
+import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
 
-checkNodeEnv('production');
-deleteSourceMaps();
-
-const devtoolsConfig =
-  process.env.DEBUG_PROD === 'true'
-    ? {
-        devtool: 'source-map',
-      }
-    : {};
+CheckNodeEnv('production');
+DeleteSourceMaps();
 
 export default merge(baseConfig, {
-  ...devtoolsConfig,
+  devtool: process.env.DEBUG_PROD === 'true' ? 'source-map' : 'none',
 
   mode: 'production',
 
   target: 'electron-main',
 
   entry: {
-    main: path.join(webpackPaths.srcMainPath, 'main.ts'),
-    preload: path.join(webpackPaths.srcMainPath, 'preload.js'),
+    main: path.join(webpackPaths.srcMainPath, 'main.js'),
+    // preload: path.join(webpackPaths.srcMainPath, 'preload.js'),
   },
 
   output: {
@@ -39,11 +34,26 @@ export default merge(baseConfig, {
     filename: '[name].js',
   },
 
+  module: {
+    rules: [
+      {
+        test: /\.(jsc)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+    ],
+  },
+
   optimization: {
+    minimize: true,
     minimizer: [
       new TerserPlugin({
         parallel: true,
       }),
+      // new CssMinimizerPlugin(),
     ],
   },
 
@@ -53,6 +63,8 @@ export default merge(baseConfig, {
         process.env.OPEN_ANALYZER === 'true' ? 'server' : 'disabled',
       openAnalyzer: process.env.OPEN_ANALYZER === 'true',
     }),
+
+    // new BytenodeWebpackPlugin({ compileForElectron: true }),
 
     /**
      * Create global constants which can be configured at compile time.
@@ -67,6 +79,7 @@ export default merge(baseConfig, {
       NODE_ENV: 'production',
       DEBUG_PROD: false,
       START_MINIMIZED: false,
+      E2E_BUILD: false,
     }),
   ],
 
